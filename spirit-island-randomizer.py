@@ -59,19 +59,22 @@ scenarios = [Scenario("Blitz", 0, 0), Scenario("Guard the Isle's Heart", 0, 0), 
 
 
 
-def randomize_spirit(cap):
-    if cap == "low" or cap == "l":
+def randomize_spirit():
+    complexity_cap = input("Maximum allowed complexity for your spirit ((l)ow, (m)oderate, (h)igh, (v)ery high): ")
+    if complexity_cap == "low" or complexity_cap == "l":
         random_int = random.randint(0, len(low_complexity_spirits) - 1)
         return low_complexity_spirits[random_int]
-    elif cap == "moderate" or cap == "m":
+    elif complexity_cap == "moderate" or complexity_cap == "m":
         random_int = random.randint(0, len(low_to_moderate_complexity_spirits) - 1)
         return low_to_moderate_complexity_spirits[random_int]
-    elif cap == "high" or cap == "h":
+    elif complexity_cap == "high" or complexity_cap == "h":
         random_int = random.randint(0, len(low_to_high_complexity_spirits) - 1)
         return low_to_high_complexity_spirits[random_int]
-    else:
+    elif complexity_cap == "very high" or complexity_cap == "v":
         random_int = random.randint(0, len(all_spirits) - 1)
         return all_spirits[random_int]
+    else:
+        return "Invalid complexity"
 
 def randomize_adversary(cap):
     adversary = adversaries[random.randint(0, len(adversaries) - 1)]
@@ -97,13 +100,7 @@ answer = input("Select the thing you would like to have picked ((s)pirit, (a)dve
                "or end randomizing (end): ")
 while answer != "end":
     if answer == "spirit" or answer == "s":
-        complexity_cap = input("Maximum allowed complexity for your spirit ((l)ow, (m)oderate, (h)igh, (v)ery high): ")
-        if (complexity_cap == "low" or complexity_cap == "l" or complexity_cap == "moderate" or complexity_cap == "m"
-                or complexity_cap == "high" or complexity_cap == "h" or complexity_cap == "very high"
-                or complexity_cap == "v"):
-            print(randomize_spirit(complexity_cap))
-        else:
-            print("Unknown complexity")
+        print(randomize_spirit())
     elif answer == "adversary" or answer == "a":
         try:
             difficulty_cap = int(input("Maximum allowed difficulty (from 1 to 11): "))
