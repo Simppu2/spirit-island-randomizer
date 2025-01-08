@@ -66,7 +66,7 @@ def validate_spirit_complexity(complexity):
     else:
         return False
 
-def validate_adversary_difficulty(difficulty):
+def validate_adversary_or_combined_difficulty(difficulty):
     try:
         if int(difficulty) >= 1:
             return True
@@ -121,21 +121,20 @@ def main():
                    "or end randomizing (end): ")
     while answer != "end":
         if answer == "spirit" or answer == "s":
-            complexity_cap = input("Maximum allowed complexity for your spirit"
-                                   " ((l)ow, (m)oderate, (h)igh, (v)ery high): ")
+            complexity_cap = input("Maximum allowed spirit complexity ((l)ow, (m)oderate, (h)igh, (v)ery high): ")
             if validate_spirit_complexity(complexity_cap):
                 print(randomize_spirit(complexity_cap))
             else:
                 print("Invalid complexity")
         elif answer == "adversary" or answer == "a":
-            difficulty_cap = input("Maximum allowed difficulty (from 1 to 11): ")
-            if validate_adversary_difficulty(difficulty_cap):
+            difficulty_cap = input("Maximum allowed adversary difficulty (from 1 to 11): ")
+            if validate_adversary_or_combined_difficulty(difficulty_cap):
                 adversary_name, adversary_level, adversary_difficulty = randomize_adversary(int(difficulty_cap))
                 print("{} level {}, difficulty {}".format(adversary_name, adversary_level, adversary_difficulty))
             else:
                 print("Invalid difficulty")
         elif answer == "scenario" or answer == "sc":
-            difficulty_cap = input("Maximum allowed difficulty (from 0 to 4): ")
+            difficulty_cap = input("Maximum allowed scenario difficulty (from 0 to 4): ")
             if validate_scenario_difficulty(difficulty_cap):
                 scenario_name, scenario_min_difficulty, scenario_max_difficulty\
                     = randomize_scenario(int(difficulty_cap))
@@ -146,7 +145,37 @@ def main():
                     print("{}, difficulty {}".format(scenario_name, scenario_max_difficulty))
             else:
                 print("Invalid difficulty")
-        #elif answer == "all":
+        elif answer == "all":
+            complexity_cap = input("Maximum allowed complexity for your spirit"
+                                   " ((l)ow, (m)oderate, (h)igh, (v)ery high): ")
+            difficulty_cap = input("Maximum allowed combined adversary and scenario difficulty (from 1 to 15): ")
+            if validate_spirit_complexity(complexity_cap):
+                print(randomize_spirit(complexity_cap))
+            else:
+                print("Invalid complexity")
+            if validate_adversary_or_combined_difficulty(difficulty_cap):
+                adversary_name, adversary_level, adversary_difficulty = randomize_adversary(int(difficulty_cap))
+                scenario_name, scenario_min_difficulty, scenario_max_difficulty \
+                    = randomize_scenario(int(difficulty_cap))
+                while adversary_difficulty + scenario_max_difficulty > int(difficulty_cap):
+                    adversary_name, adversary_level, adversary_difficulty = randomize_adversary(int(difficulty_cap))
+                    scenario_name, scenario_min_difficulty, scenario_max_difficulty \
+                        = randomize_scenario(int(difficulty_cap))
+                print("{} level {}, difficulty {}".format(adversary_name, adversary_level, adversary_difficulty))
+                if scenario_min_difficulty != scenario_max_difficulty:
+                    print("{}, difficulty ranging from {} to {}"
+                          .format(scenario_name, scenario_min_difficulty, scenario_max_difficulty))
+                else:
+                    print("{}, difficulty {}".format(scenario_name, scenario_max_difficulty))
+                if scenario_min_difficulty != scenario_max_difficulty:
+                    print("Combined difficulty ranging from {} to {}"
+                          .format(adversary_difficulty + scenario_min_difficulty,
+                                  adversary_difficulty + scenario_max_difficulty))
+                else:
+                    print("Combined difficulty {}".format(adversary_difficulty + scenario_max_difficulty))
+            else:
+                print("Invalid difficulty")
+
 
         else:
             print("Invalid command")
@@ -159,4 +188,5 @@ def main():
 
 
 
-main()
+if __name__=="__main__":
+    main()
