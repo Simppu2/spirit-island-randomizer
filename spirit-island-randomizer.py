@@ -96,10 +96,8 @@ print("Welcome to the Spirit Island randomizer")
 answer = input("Select the thing you would like to have picked ((s)pirit, (a)dversary, (sc)enario, all) "
                "or end randomizing (end): ")
 while answer != "end":
-    print()
     if answer == "spirit" or answer == "s":
         complexity_cap = input("Maximum allowed complexity for your spirit ((l)ow, (m)oderate, (h)igh, (v)ery high): ")
-        print()
         if (complexity_cap == "low" or complexity_cap == "l" or complexity_cap == "moderate" or complexity_cap == "m"
                 or complexity_cap == "high" or complexity_cap == "h" or complexity_cap == "very high"
                 or complexity_cap == "v"):
@@ -109,19 +107,16 @@ while answer != "end":
     elif answer == "adversary" or answer == "a":
         try:
             difficulty_cap = int(input("Maximum allowed difficulty (from 1 to 11): "))
-            print()
             if difficulty_cap < 1:
                 print("Difficulty too low")
             else:
                 adversary_name, adversary_level, adversary_difficulty = randomize_adversary(difficulty_cap)
                 print("{} level {}, difficulty {}".format(adversary_name, adversary_level, adversary_difficulty))
         except ValueError:
-            print()
             print("Unknown difficulty")
     elif answer == "scenario" or answer == "sc":
         try:
             difficulty_cap = int(input("Maximum allowed difficulty (from -1 to 4): "))
-            print()
             if difficulty_cap < -1:
                 print("Difficulty too low")
             else:
@@ -133,7 +128,6 @@ while answer != "end":
                     print("{}, difficulty {}"
                           .format(scenario_name, scenario_max_difficulty))
         except ValueError:
-            print()
             print("Unknown difficulty")
     elif answer == "all":
         try:
@@ -141,7 +135,6 @@ while answer != "end":
                                    "((l)ow, (m)oderate, (h)igh, (v)ery high): ")
             difficulty_cap = int(input("Maximum allowed combined difficulty"
                                        " of adversary and scenario (from 1 to 15): "))
-            print()
             if complexity_cap == ("low" or complexity_cap == "l" or complexity_cap == "moderate"
                 or complexity_cap == "m" or complexity_cap == "high" or complexity_cap == "h"
                     or complexity_cap == "very high" or complexity_cap == "v"):
