@@ -59,8 +59,32 @@ scenarios = [Scenario("Blitz", 0, 0), Scenario("Guard the Isle's Heart", 0, 0), 
 
 
 
-def randomize_spirit():
-    complexity_cap = input("Maximum allowed complexity for your spirit ((l)ow, (m)oderate, (h)igh, (v)ery high): ")
+def validate_spirit_complexity(complexity):
+    if (complexity == "low" or complexity == "l" or complexity == "moderate" or complexity == "m"
+            or complexity == "high" or complexity == "h" or complexity == "very high" or complexity == "v"):
+        return True
+    else:
+        return False
+
+def validate_adversary_difficulty(difficulty):
+    try:
+        if int(difficulty) >= 1:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+def validate_scenario_difficulty(difficulty):
+    try:
+        if int(difficulty) >= 0:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+def randomize_spirit(complexity_cap):
     if complexity_cap == "low" or complexity_cap == "l":
         random_int = random.randint(0, len(low_complexity_spirits) - 1)
         return low_complexity_spirits[random_int]
@@ -70,11 +94,9 @@ def randomize_spirit():
     elif complexity_cap == "high" or complexity_cap == "h":
         random_int = random.randint(0, len(low_to_high_complexity_spirits) - 1)
         return low_to_high_complexity_spirits[random_int]
-    elif complexity_cap == "very high" or complexity_cap == "v":
+    else:
         random_int = random.randint(0, len(all_spirits) - 1)
         return all_spirits[random_int]
-    else:
-        return "Invalid complexity"
 
 def randomize_adversary(cap):
     adversary = adversaries[random.randint(0, len(adversaries) - 1)]
@@ -93,77 +115,48 @@ def randomize_scenario(cap):
         scenario = scenarios[random.randint(0, len(scenarios) - 1)]
     return scenario.return_name(), scenario.return_min_difficulty(), scenario.return_max_difficulty()
 
-
-
-print("Welcome to the Spirit Island randomizer")
-answer = input("Select the thing you would like to have picked ((s)pirit, (a)dversary, (sc)enario, all) "
-               "or end randomizing (end): ")
-while answer != "end":
-    if answer == "spirit" or answer == "s":
-        print(randomize_spirit())
-    elif answer == "adversary" or answer == "a":
-        try:
-            difficulty_cap = int(input("Maximum allowed difficulty (from 1 to 11): "))
-            if difficulty_cap < 1:
-                print("Difficulty too low")
+def main():
+    print("Welcome to the Spirit Island randomizer")
+    answer = input("Select the thing you would like to have picked ((s)pirit, (a)dversary, (sc)enario, all) "
+                   "or end randomizing (end): ")
+    while answer != "end":
+        if answer == "spirit" or answer == "s":
+            complexity_cap = input("Maximum allowed complexity for your spirit"
+                                   " ((l)ow, (m)oderate, (h)igh, (v)ery high): ")
+            if validate_spirit_complexity(complexity_cap):
+                print(randomize_spirit(complexity_cap))
             else:
-                adversary_name, adversary_level, adversary_difficulty = randomize_adversary(difficulty_cap)
+                print("Invalid complexity")
+        elif answer == "adversary" or answer == "a":
+            difficulty_cap = input("Maximum allowed difficulty (from 1 to 11): ")
+            if validate_adversary_difficulty(difficulty_cap):
+                adversary_name, adversary_level, adversary_difficulty = randomize_adversary(int(difficulty_cap))
                 print("{} level {}, difficulty {}".format(adversary_name, adversary_level, adversary_difficulty))
-        except ValueError:
-            print("Unknown difficulty")
-    elif answer == "scenario" or answer == "sc":
-        try:
-            difficulty_cap = int(input("Maximum allowed difficulty (from -1 to 4): "))
-            if difficulty_cap < -1:
-                print("Difficulty too low")
             else:
-                scenario_name, scenario_min_difficulty, scenario_max_difficulty = randomize_scenario(difficulty_cap)
+                print("Invalid difficulty")
+        elif answer == "scenario" or answer == "sc":
+            difficulty_cap = input("Maximum allowed difficulty (from 0 to 4): ")
+            if validate_scenario_difficulty(difficulty_cap):
+                scenario_name, scenario_min_difficulty, scenario_max_difficulty\
+                    = randomize_scenario(int(difficulty_cap))
                 if scenario_min_difficulty != scenario_max_difficulty:
                     print("{}, difficulty ranging from {} to {}"
                           .format(scenario_name, scenario_min_difficulty, scenario_max_difficulty))
                 else:
-                    print("{}, difficulty {}"
-                          .format(scenario_name, scenario_max_difficulty))
-        except ValueError:
-            print("Unknown difficulty")
-    elif answer == "all":
-        try:
-            complexity_cap = input("Maximum allowed complexity for your spirit "
-                                   "((l)ow, (m)oderate, (h)igh, (v)ery high): ")
-            difficulty_cap = int(input("Maximum allowed combined difficulty"
-                                       " of adversary and scenario (from 1 to 15): "))
-            if complexity_cap == ("low" or complexity_cap == "l" or complexity_cap == "moderate"
-                or complexity_cap == "m" or complexity_cap == "high" or complexity_cap == "h"
-                    or complexity_cap == "very high" or complexity_cap == "v"):
-                print(randomize_spirit(complexity_cap))
+                    print("{}, difficulty {}".format(scenario_name, scenario_max_difficulty))
             else:
-                print("Unknown complexity")
-            if difficulty_cap < 1:
-                print("Difficulty too low")
-            else:
-                adversary_name, adversary_level, adversary_difficulty = randomize_adversary(difficulty_cap)
-                scenario_name, scenario_min_difficulty, scenario_max_difficulty = randomize_scenario(difficulty_cap)
-                while adversary_difficulty + scenario_max_difficulty > difficulty_cap:
-                    adversary_name, adversary_level, adversary_difficulty = randomize_adversary(difficulty_cap)
-                    scenario_name, scenario_min_difficulty, scenario_max_difficulty \
-                        = randomize_scenario(difficulty_cap)
-                print("{} level {}, difficulty {}".format(adversary_name, adversary_level, adversary_difficulty))
-                if scenario_min_difficulty != scenario_max_difficulty:
-                    print("{}, difficulty ranging from {} to {}".format(scenario_name, scenario_min_difficulty,
-                                                                        scenario_max_difficulty))
-                    print("Total difficulty ranging from {} to {}"
-                          .format(adversary_difficulty + scenario_min_difficulty,
-                                  adversary_difficulty + scenario_max_difficulty))
-                else:
-                    print("{}, difficulty {}"
-                          .format(scenario_name, scenario_max_difficulty))
-                    print("Total difficulty {}".format(adversary_difficulty + scenario_max_difficulty))
-        except ValueError:
-            print("Unknown difficulty level")
+                print("Invalid difficulty")
+        #elif answer == "all":
 
-    else:
-        print("Unknown command")
+        else:
+            print("Invalid command")
+
+        print()
+        answer = input("Randomize more ((s)pirit, (a)dversary, (sc)enario, all) or end randomizing (end): ")
+
     print()
-    answer = input("Randomize more ((s)pirit, (a)dversary, (sc)enario, all) or end randomizing (end): ")
-print()
-print("Good luck, have fun!")
+    print("Good luck, have fun!")
+
+
+
+main()
